@@ -1,0 +1,23 @@
+{
+  "name": "eka-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.1.0",
+    "@azure/functions": "^4.0.0",
+    "@azure/service-bus": "^7.9.5",
+    "@azure/storage-blob": "^12.24.0",
+    "@prisma/client": "^5.18.0",
+    "axios": "^1.7.5",
+    "dotenv": "^16.4.5",
+    "form-data": "^4.0.0"
+  },
+  "main": "src/{index.js,functions/*.js}",
+  "devDependencies": {
+    "prisma": "^5.18.0"
+  }
+}

@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String
+  password  String?
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  admin      Admin?
+  superAdmin SuperAdmin?
+  physician  Physician?
+  conversationsInitiated Conversation[] @relation("Initiator")
+}
+
+model Admin {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model SuperAdmin {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model Physician {
+  id             Int       @id @default(autoincrement())
+  clerkId        String    @unique
+  userId         Int       @unique
+  user           User      @relation(fields: [userId], references: [id])
+  specialization String?
+  patients       Patient[]
+}
+
+model Patient {
+  id               Int       @id @default(autoincrement())
+  name             String?
+  dateOfBirth      DateTime?
+  visitDay         DateTime @default(now())
+  physician        Physician @relation(fields: [physicianId], references: [id])
+  physicianId      Int
+  generating    Boolean  @default(false) // Add this field
+
+  conversationsReceived  Conversation[] @relation("Receiver")
+
+}
+
+model Conversation {
+  id            Int      @id @default(autoincrement())
+  initiatorId   Int
+  receiverId    Int
+  messagesId    String   
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  initiator     User     @relation("Initiator", fields: [initiatorId], references: [id])
+  receiver      Patient     @relation("Receiver", fields: [receiverId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  SUPERADMIN
+  PHYSICIAN
+}
